@@ -86,7 +86,7 @@ def wineyun_extract(hostname="http://www.wineyun.com/",
             title = child_soup.head.title.text
             info_dict.update({"标题": title})
             print(30*"*" + title + 30*"*")
-            print("url: {}".format(wine_url))
+            # print("url: {}".format(wine_url))
 
             # # step 2: get the wine section
             trouble_attrs = list()
@@ -149,7 +149,9 @@ def wineyun_extract(hostname="http://www.wineyun.com/",
             if not os.path.exists(local_pic_path):
                 with open(local_pic_path, "wb") as fin:
                     fin.write(pic_response.content)
-            info_dict.update({"图片": "file:///{}".format(os.path.abspath(local_pic_path))})
+            # must use double quotations and relative path(not absolute path in Windows)
+            info_dict.update({"图片": '=HYPERLINK("{0}", "{1}")'.format(local_pic_path,
+                                                                      "{}.png".format(goods_id))})
             # info_dict.update({"图片": pic_url})
 
             # # step 4: get the winery section
@@ -171,7 +173,7 @@ def wineyun_extract(hostname="http://www.wineyun.com/",
             # # step 7: print logs
             if len(trouble_attrs) > 0:
                 print("Error in getting (%s): %s" % (" ".join(trouble_attrs), title))
-                # print("url: {}".format(wine_url))
+                print("url: {}".format(wine_url))
 
             # # step 8: save to pandas.DataFrame
             dump_df = dump_df.append(info_dict, ignore_index=True)
